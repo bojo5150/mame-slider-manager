@@ -1,0 +1,9 @@
+{
+    "plugin": {
+        "name": "slider_manager",
+        "description": "Per-game slider presets for MAME",
+        "version": "0.1.0",
+        "author": "bojo5150 & ChatGPT",
+        "type": "plugin"
+    }
+}
