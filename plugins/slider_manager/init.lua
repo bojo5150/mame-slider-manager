@@ -1,31 +1,78 @@
 -----------------------------------------------------------
 --
 -- MAME Slider Manager
--- Version: 0.1.0-alpha
+-- Version: 0.1.2-alpha
 --
 -----------------------------------------------------------
 
 local exports = {}
 
-local function log(message)
-    print("[SliderManager] " .. message)
+local found = false
+
+local function log(msg)
+    print("[SliderManager] " .. msg)
 end
 
 function exports.startplugin()
 
-    log("Plugin Loaded")
+    emu.add_machine_frame_notifier(function()
 
-    if manager
-        and manager.machine
-        and manager.machine.system then
+        if found then
+            return
+        end
 
-        log("Game : " .. manager.machine.system.name)
+        if manager.machine == nil then
+            return
+        end
 
-    else
+        found = true
 
-        log("Unable to determine running game.")
+        log("Machine ready")
+        log("ROM: " .. manager.machine.system.name)
 
+        local cpu = manager.machine.devices[":ppc1"]
+
+        if cpu == nil then
+            log("Couldn't find :ppc1")
+            return
+        end
+
+        log("ppc1 found")
+        log("ppc1 type: " .. type(cpu))
+
+        log("Inspecting parameters...")
+
+local ok, params = pcall(function()
+    return cpu.parameter
+end)
+
+log("parameter exists: " .. tostring(ok))
+log("parameter type: " .. type(params))
+
+if ok and params then
+    local mt = getmetatable(params)
+
+    if mt then
+        log("===== parameter metatable =====")
+
+        for k,v in pairs(mt) do
+            log("  " .. tostring(k))
+        end
     end
+end
+
+        if not mt then
+            log("No metatable")
+            return
+        end
+
+        log("===== ppc1 metatable =====")
+
+        for k, v in pairs(mt) do
+            log("  " .. tostring(k))
+        end
+
+    end)
 
 end
 
