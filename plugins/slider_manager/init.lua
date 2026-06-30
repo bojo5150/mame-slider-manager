@@ -1,76 +1,39 @@
------------------------------------------------------------
---
--- MAME Slider Manager
--- Version: 0.1.2-alpha
---
------------------------------------------------------------
-
 local exports = {}
 
-local found = false
-
 local function log(msg)
-    print("[SliderManager] " .. msg)
+    print("[SliderManager] " .. tostring(msg))
+end
+
+local function test(obj, name)
+    local ok, value = pcall(function()
+        return obj[name]
+    end)
+
+    if ok then
+        log(name .. " = " .. tostring(value) .. " (" .. type(value) .. ")")
+    else
+        log(name .. " = <ERROR>")
+    end
 end
 
 function exports.startplugin()
 
-    emu.add_machine_frame_notifier(function()
-
-        if found then
-            return
-        end
-
-        if manager.machine == nil then
-            return
-        end
-
-        found = true
+    emu.add_machine_reset_notifier(function()
 
         log("Machine ready")
-        log("ROM: " .. manager.machine.system.name)
 
-        local cpu = manager.machine.devices[":ppc1"]
+        local ui = manager.ui
 
-        if cpu == nil then
-            log("Couldn't find :ppc1")
-            return
-        end
+        log("===== Direct Member Tests =====")
 
-        log("ppc1 found")
-        log("ppc1 type: " .. type(cpu))
-
-        log("Inspecting parameters...")
-
-local ok, params = pcall(function()
-    return cpu.parameter
-end)
-
-log("parameter exists: " .. tostring(ok))
-log("parameter type: " .. type(params))
-
-if ok and params then
-    local mt = getmetatable(params)
-
-    if mt then
-        log("===== parameter metatable =====")
-
-        for k,v in pairs(mt) do
-            log("  " .. tostring(k))
-        end
-    end
-end
-
-        if not mt then
-            log("No metatable")
-            return
-        end
-
-        log("===== ppc1 metatable =====")
-
-        for k, v in pairs(mt) do
-            log("  " .. tostring(k))
-        end
+        test(ui, "sliders")
+        test(ui, "slider")
+        test(ui, "get_slider_list")
+        test(ui, "slider_list")
+        test(ui, "menu")
+        test(ui, "menus")
+        test(ui, "handler")
+        test(ui, "handlers")
 
     end)
 
